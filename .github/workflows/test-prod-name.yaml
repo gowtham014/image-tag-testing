@@ -1,0 +1,25 @@
+
+
+
+on:
+  workflow_dispatch:
+    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate image tag
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+
+          if [ "$BRANCH" = "main" ]; then
+            PREFIX="prod"
+          else
+            PREFIX="pre-prod"
+          fi
+
+          TAG="${PREFIX}-${{ github.sha }}"
+          echo "IMAGE_TAG=$TAG" 
+          echo " docker build -t myapp:${TAG}"
