@@ -1,30 +1,31 @@
-
 on:
   pull_request:
     branches:
       - develop
   workflow_dispatch:
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
     outputs:
       BRANCH: ${{ steps.tag.outputs.BRANCH }}
 
     steps:
       - name: Set branch name
+        id: tag
         run: |
           BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
-          echo "BRANCH=$BRANCH_NAME-${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo " docker build -t myapp:${BRNCH_NAME}-${{ github.sha }}"
+          echo "BRANCH=${BRANCH_NAME}-${{ github.sha }}" >> $GITHUB_OUTPUT
+
+          echo "docker build -t myapp:${BRANCH_NAME}-${{ github.sha }}"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Deploy to environment
         run: |
-          echo "Deploying image with tag docker build -t myapp:${{ needs.build.outputs.BRANCH }}"
+          echo "Deploying image tag: ${{ needs.build.outputs.BRANCH }}"
           echo "docker build -t myapp:${{ needs.build.outputs.BRANCH }}"
