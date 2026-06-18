@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Generate image tag
         run: |
@@ -22,4 +21,12 @@ jobs:
 
           TAG="${PREFIX}-${{ github.sha }}"
           echo "IMAGE_TAG=$TAG" 
+          echo " docker build -t myapp:${TAG}"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to environment
+        run: |
+          # echo "Deploying image with tag ${{ needs.build.outputs.IMAGE_TAG }}"
           echo " docker build -t myapp:${TAG}"
