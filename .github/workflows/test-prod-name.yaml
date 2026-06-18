@@ -1,17 +1,16 @@
-
-
-
 on:
   workflow_dispatch:
-    
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     outputs:
-      image_tag: ${{ steps.tag.outputs.IMAGE_TAG }}
+      IMAGE_TAG: ${{ steps.tag.outputs.IMAGE_TAG }}
+
     steps:
       - name: Generate image tag
+        id: tag
         run: |
           BRANCH="${{ github.head_ref || github.ref_name }}"
 
@@ -23,12 +22,15 @@ jobs:
 
           TAG="${PREFIX}-${{ github.sha }}"
           echo "IMAGE_TAG=$TAG" >> $GITHUB_OUTPUT
-          echo " docker build -t myapp:${TAG}"
+
+          echo "docker build -t myapp:${TAG}"
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
       - name: Deploy to environment
         run: |
-          echo "Deploying image with tag docker build -t myapp:${{ needs.build.outputs.image_tag }}"
-          echo " docker build -t myapp:${TAG}"
+          echo "Deploying image tag: ${{ needs.build.outputs.IMAGE_TAG }}"
+          echo "docker build -t myapp:${{ needs.build.outputs.IMAGE_TAG }}"
