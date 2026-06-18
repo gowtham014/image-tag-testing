@@ -9,13 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      BRANCH: ${{ steps.tag.outputs.BRANCH }}
 
     steps:
       - name: Set branch name
         run: |
           BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-          echo " docker build -t myapp:${BRANCH_NAME}-${{ github.sha }}"
+          echo "BRANCH=$BRANCH_NAME-${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo " docker build -t myapp:${BRNCH_NAME}-${{ github.sha }}"
 
   deploy:
     needs: build
@@ -24,5 +26,5 @@ jobs:
     steps:
       - name: Deploy to environment
         run: |
-          echo "Deploying image with tag docker build -t myapp:${{ env.BRANCH_NAME }}-${{ github.sha }}"
-          echo " docker build -t myapp:${{ github.head_ref || github.ref_name }}-${{ github.sha }}"
+          echo "Deploying image with tag docker build -t myapp:${{ needs.build.outputs.BRANCH }}"
+          echo "docker build -t myapp:${{ needs.build.outputs.BRANCH }}"
