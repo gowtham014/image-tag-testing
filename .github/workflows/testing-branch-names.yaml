@@ -16,3 +16,13 @@ jobs:
           BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           echo " docker build -t myapp:${BRANCH_NAME}-${{ github.sha }}"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy to environment
+        run: |
+          echo "Deploying image with tag docker build -t myapp:${{ env.BRANCH_NAME }}-${{ github.sha }}"
+          echo " docker build -t myapp:${{ env.BRANCH_NAME }}-${{ github.sha }}"
